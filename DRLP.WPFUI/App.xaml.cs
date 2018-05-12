@@ -13,5 +13,9 @@ namespace DRLP.WPFUI
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnExit(ExitEventArgs e)
+        {
+            WPFUI.Properties.Settings.Default.Save();
+        }
     }
 }
