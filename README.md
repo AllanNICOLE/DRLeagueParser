@@ -1,26 +1,27 @@
 # DRLeagueParser
-A parser for Dirt Rally league results
+Today : A parser for Dirt Rally league results, forked from [aarondemarre/DRLeagueParser](https://github.com/aarondemarre/DRLeagueParser)
+Tomorrow : A manager for Dirt Rally league results
 
-Some basic instructions, more detailed docs are coming
+## Why this project ? 
+DiRT Rally is a fantastic rally game with leagues system. A web application display some details for current event. This application consume a public API (designed by himself).
+The purpose of this project is to create a new application based on this API, to : 
+* expolit full data of the API 
+* Store and retrieve data after event finished (because the API doesn't retrieved Driver Times once event finished)
+* Display some comparative charts 
+* ...
 
-**Parsing via Racenet API:**
+## Roadmap
+* Document this unofficial RaceNet API
+* Enhance WPF application ==> DR League Viewer 
+	* Exploit all the information of RaceNetAPI in the WPF
+	* Add caching system to limit calls
+	* Persist data 
+	* Export features
+	* Some UX improvements
+* Create a Web application ==> DR League Manager
+	* Add some charts 
+	* Auto updater system (when you set event ID first time)
+	* Custom leaderboard scoring system
+	* ...
 
-All results can now be parsed via the Racenet API, this can also pull the stage data from rallies that have expired and are no longer available via dirtgame.com. The event ID can be found in the page source of the event on the event page at dirtgame.com.
-
-Simply put the event ID into the "Parse via Racenet" input and all stages will be pulled and parsed!
-
-
-
-**Parsing via text:**
-
-1) Copy the results of a stage from the RaceNet site and paste into the large text box in the app, then click "Parse Stage Data"
-
-2) Repeat step one for each stage in your event (don't combine or split up stages, each parse is expected to be it's own stage)
-
-3) Once all stages are parsed click "Crunch Numbers" to calculate individual stage times from the parsed overall times
-
-4) Click "Print Stage Times" to output the individual stage times and winners, and "Print Overall Times" to output the overall times (overall should be the same as the RaceNet results)
-
-The output is in CSV, I then put this into a spreadsheet for formatting.
-
-Note: I use Firefox and the copied data is tab delimited, but this is not the case for all browsers. The input data must be tab delimited. I also use US locale settings on the RaceNet site, but I don't think other locales will cause an issue. The times are expected to be in the "mm:ss.fff" format, which I believe is an international standard.
+Thanks to CanardPC DR racers (cooly08, zexav, ...),  [aarondemarre](https://github.com/aarondemarre) and futurs contributors.
