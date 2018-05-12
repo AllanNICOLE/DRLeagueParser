@@ -26,7 +26,6 @@ namespace DRLP.WPFUI
         {
             InitializeComponent();
             DataContext = this;
-
             label_statusMessage.Content = "";
         }
 
