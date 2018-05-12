@@ -133,7 +133,7 @@ namespace DRLP.WPFUI
                 rallyData.CalculateTimes();
                 label_statusMessage.Content = rallyData.StageCount + " stages retrieved from Racenet, numbers crunched sucessfully";
                 label_statusMessage.Foreground = Brushes.Green;
-                printStageTimes();
+                printStageTimes(); 
                 comboBox_printType.SelectedValue = PrintType.Stages;
             }
         }
