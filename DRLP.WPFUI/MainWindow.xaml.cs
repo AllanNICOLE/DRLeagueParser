@@ -123,12 +123,18 @@ namespace DRLP.WPFUI
             {
                 label_statusMessage.Content = "Failed to get data from Racenet";
                 label_statusMessage.Foreground = Brushes.Red;
+            } else if (rallyData.StageCount == 0)
+            {
+                label_statusMessage.Content = "No event found. Please check the EventID";
+                label_statusMessage.Foreground = Brushes.Orange;
             }
             else
             {
                 rallyData.CalculateTimes();
                 label_statusMessage.Content = rallyData.StageCount + " stages retrieved from Racenet, numbers crunched sucessfully";
                 label_statusMessage.Foreground = Brushes.Green;
+                printStageTimes();
+                comboBox_printType.SelectedValue = PrintType.Stages;
             }
         }
 
