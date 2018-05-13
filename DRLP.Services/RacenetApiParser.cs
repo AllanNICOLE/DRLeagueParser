@@ -12,35 +12,24 @@ namespace DRLP.Services
     {
         private HttpClient httpClient;
 
-        public RacenetApiParser()
+        public RacenetApiParser(string apiURL)
         {
+            ApiURL = apiURL;
             var httpClientHandler = new HttpClientHandler();
             httpClientHandler.CookieContainer = new CookieContainer();
             httpClient = new HttpClient(httpClientHandler, true);
         }
 
+        public string ApiURL { get; set; }
+
         /// <summary>
         /// Creates the URIs and parses responses into Rally objects
         /// </summary>
-        public Rally GetRallyData(string leagueUrl, string eventId, IProgress<int> progress)
+        public Rally GetRallyData(string eventId, IProgress<int> progress)
         {
             try
             {
-                // the uri might be able to be null for PC leagues, but is required for console leagues
-                // this sets the session state on the server and stores the cookie with the ASP.NET session ID for later
-                if (!string.IsNullOrWhiteSpace(leagueUrl))
-                {
-                    var mainPageResult = httpClient.GetAsync(leagueUrl).Result;
-                    if (mainPageResult == null || mainPageResult.StatusCode != HttpStatusCode.OK)
-                        throw new Exception("Failed to get data from main league page, error: " + mainPageResult.StatusCode);
-                }
-
-                // example string for reference
-                //string apiUrl = "https://www.dirtgame.com/uk/api/event?assists=any&eventId=95576&group=all&leaderboard=true&nameSearch=&noCache=1463699433315&number=10&page=1&stageId=0&wheel=any";
-
-                string apiUrl = "https://www.dirtgame.com/uk/api/event?assists=any&group=all&leaderboard=true&nameSearch=&number=10&wheel=any";
-
-                var uriBuilder = new UriBuilder(apiUrl);
+                var uriBuilder = new UriBuilder(ApiURL);
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
                 query["eventId"] = eventId;
                 query["noCache"] = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds.ToString();

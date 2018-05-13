@@ -34,5 +34,18 @@ namespace DRLP.WPFUI.Properties {
                 this["CurrentEventID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.dirtgame.com/uk/api/event?assists=any&group=all&leaderboard=true&name" +
+            "Search=&number=10&wheel=any")]
+        public string ApiURL {
+            get {
+                return ((string)(this["ApiURL"]));
+            }
+            set {
+                this["ApiURL"] = value;
+            }
+        }
     }
 }

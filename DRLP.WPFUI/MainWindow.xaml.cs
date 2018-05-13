@@ -20,7 +20,7 @@ namespace DRLP.WPFUI
     public partial class MainWindow : Window
     {
         private Rally rallyData = new Rally();
-        private RacenetApiParser racenetApiParser = new RacenetApiParser();
+        private RacenetApiParser racenetApiParser = new RacenetApiParser(Properties.Settings.Default.ApiURL);
 
         public MainWindow()
         {
@@ -109,7 +109,7 @@ namespace DRLP.WPFUI
             });
 
             // run task to get data
-            var getDataTask = Task<Rally>.Factory.StartNew(() => racenetApiParser.GetRallyData(null, eventId, progress));
+            var getDataTask = Task<Rally>.Factory.StartNew(() => racenetApiParser.GetRallyData(eventId, progress));
 
             label_statusMessage.Content = "Fetching data from Racenet (be patient, Racenet is slow)...";
             label_statusMessage.Foreground = Brushes.Green;
