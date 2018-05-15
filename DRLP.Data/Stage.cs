@@ -7,7 +7,7 @@ namespace DRLP.Data
     /// Holds all driver times for a single stage
 	/// Enumeration returns DriverTimes
     /// </summary>
-    public class Stage : IEnumerable
+    public class Stage
     {
         public Dictionary<string, DriverTime> DriverTimes { get; private set; }
 

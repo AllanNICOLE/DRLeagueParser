@@ -94,7 +94,8 @@ namespace DRLP.Services
                             throw new Exception("Racenet data incomplete for stage " + i);
 
                     rallyData.AddStage(stageData);
-                    progress.Report(rallyData.StageCount);
+                    if (progress != null)
+                        progress.Report(rallyData.StageCount);
                 }
 
                 return rallyData;

@@ -8,11 +8,11 @@ namespace DRLP.Data
     /// <summary>
     /// Holds all stage times
     /// </summary>
-    public class Rally : IEnumerable
+    public class Rally
     {
         public int StageCount { get { return stages.Count; } }
 
-        private List<Stage> stages = new List<Stage>();
+        public List<Stage> stages = new List<Stage>();
 
         /// <summary>
         /// Adds a stage to the rally's stage collection
@@ -154,11 +154,6 @@ namespace DRLP.Data
                     stagePosition++;
                 }
             }
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            return ((IEnumerable)stages).GetEnumerator();
         }
     }
 }
