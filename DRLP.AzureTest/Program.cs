@@ -10,65 +10,84 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using Microsoft.Azure;
+using HtmlAgilityPack;
 
 namespace DRLP.AzureTest
 {
     class Program
     {
-        
+        const string TableReference = "Rally";
 
         static void Main(string[] args)
         {
-            string eventId = CloudConfigurationManager.GetSetting("EventId");
+            var leaguesId = CloudConfigurationManager.GetSetting("LeaguesId").Split(';');
+            if (!leaguesId.Any())
+                Console.Write("ERROR : No league to check. Please set the LeaguesId setting");
 
-            Task<Rally> t = Task<Rally>.Factory.StartNew(() =>
+            foreach (var item in leaguesId)
             {
-                RacenetApiParser racenetApiParser = new RacenetApiParser(CloudConfigurationManager.GetSetting("LeagueURL"));
-                return racenetApiParser.GetRallyData(eventId, null);
-            });
-            
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse
-                    (CloudConfigurationManager.GetSetting("StorageConnectionString"));
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-            CloudTable table = tableClient.GetTableReference("Rally");
-            TableOperation retrieveOperation = TableOperation.Retrieve<RallyEntity>("1", eventId);
-            Task<TableResult> retrievedResult = table.ExecuteAsync(retrieveOperation);
-            retrievedResult.Wait();
-            if (retrievedResult.Result.Result != null)
-            {
-                RallyEntity entity = ((RallyEntity)retrievedResult.Result.Result);
-                Rally rallyData = JsonConvert.DeserializeObject<Rally>(entity.Data);
-                if (t.Result.StageCount >= rallyData.StageCount)
+                RallyEntity r = GetCurrentEventId(item);
+                Console.WriteLine($"Retreiving data for league {item} - {r.LeagueTitle} => {r.EventId}");
+
+                Task<Rally> t = Task<Rally>.Factory.StartNew(() =>
                 {
-                    entity.Data = JsonConvert.SerializeObject(t.Result, Formatting.Indented);
-                    retrieveOperation = TableOperation.Replace(entity);
-                    table.Execute(retrieveOperation);
-                    Console.WriteLine("Data updated in Azure !");
-                }                
-            } else
+                    RacenetApiParser racenetApiParser = new RacenetApiParser(CloudConfigurationManager.GetSetting("EventAPI"));
+                    return racenetApiParser.GetRallyData(r.EventId, null);
+                });
+
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse
+                        (CloudConfigurationManager.GetSetting("StorageConnectionString"));
+                CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+                CloudTable table = tableClient.GetTableReference(TableReference);
+                TableOperation retrieveOperation = TableOperation.Retrieve<RallyEntity>(r.LeagueId, r.EventId);
+                TableResult retrievedResult = table.Execute(retrieveOperation);
+                if (retrievedResult.Result != null)
+                {
+                    RallyEntity entity = ((RallyEntity)retrievedResult.Result);
+                    Rally rallyData = JsonConvert.DeserializeObject<Rally>(entity.Data);
+                    if (t.Result.StageCount >= rallyData.StageCount)
+                    {
+                        entity.Data = JsonConvert.SerializeObject(t.Result);
+                        retrieveOperation = TableOperation.Replace(entity);
+                        table.Execute(retrieveOperation);
+                        Console.WriteLine("Data updated in Azure !");
+                    }
+                }
+                else
+                {
+                    r.Data = JsonConvert.SerializeObject(t.Result);
+                    TableOperation insertOperation = TableOperation.Insert(r);
+                    table.Execute(insertOperation);
+                    Console.WriteLine("Data added in Azure !");
+                }
+                Console.WriteLine($"Done...");
+            }            
+        }
+
+        static RallyEntity GetCurrentEventId(string leagueId)
+        {
+            var html = CloudConfigurationManager.GetSetting("LeagueURL") + leagueId;
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+            string eventId = htmlDoc.DocumentNode.SelectNodes("//div[@data-ng-event-id]").FirstOrDefault().Attributes["data-ng-event-id"].Value;
+            string leagueTitle = htmlDoc.DocumentNode.SelectSingleNode("//title").InnerText.Split('|')[0].Trim();
+            return new RallyEntity
             {
-                RallyEntity re = new RallyEntity(eventId, "1");
-                re.Data = JsonConvert.SerializeObject(t.Result, Formatting.Indented);
-                re.Info = CloudConfigurationManager.GetSetting("EventInfo");
-                TableOperation insertOperation = TableOperation.Insert(re);
-                table.Execute(insertOperation);
-                Console.WriteLine("Data added in Azure !");
-            }
+                PartitionKey = leagueId,
+                RowKey = eventId,
+                LeagueTitle = leagueTitle,
+            };
         }
     }
 
     class RallyEntity : TableEntity
-    {
-        public RallyEntity(string eventId, string leagueId)
-        {
-            PartitionKey = leagueId;
-            RowKey = eventId;            
-        }
-        public RallyEntity()
+    {        public RallyEntity()
         {
 
         }
         public string Data { get; set; }
-        public string Info { get; set; }
+        public string LeagueTitle { get; set; }
+        public string EventId { get { return RowKey; } }
+        public string LeagueId { get { return PartitionKey; } }
     }
 }
