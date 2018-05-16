@@ -146,7 +146,7 @@ namespace DRLP.WPFUI
             var outputSB = new StringBuilder();
 
             int stageCount = 1;
-            foreach (Stage stage in rallyData)
+            foreach (Stage stage in rallyData.stages)
             {
                 outputSB.AppendLine("SS" + stageCount);
                 outputSB.AppendLine("Overall");
@@ -205,7 +205,7 @@ namespace DRLP.WPFUI
 
             int stageCount = 1;
 
-            foreach (Stage stage in rallyData)
+            foreach (Stage stage in rallyData.stages)
             {
                 outputSB.AppendLine("SS" + stageCount);
                 outputSB.AppendLine("Stage");
@@ -262,7 +262,7 @@ namespace DRLP.WPFUI
             var positionDict = new Dictionary<string, List<int>>();
             List<KeyValuePair<string, DriverTime>> sortedStageData = null;
 
-            foreach (Stage stage in rallyData)
+            foreach (Stage stage in rallyData.stages)
             {
                 sortedStageData = stage.DriverTimes.ToList();
                 sortedStageData.Sort((x, y) =>
