@@ -280,3 +280,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /DRLP.AzureTest/User.config
+/DRLP.AzureTest/Properties/webjob-publish-settings.json

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using Microsoft.Azure;
 
 namespace DRLP.AzureTest
 {
@@ -18,16 +19,16 @@ namespace DRLP.AzureTest
 
         static void Main(string[] args)
         {
-            string eventId = ConfigurationManager.AppSettings["EventId"];
+            string eventId = CloudConfigurationManager.GetSetting("EventId");
 
             Task<Rally> t = Task<Rally>.Factory.StartNew(() =>
             {
-                RacenetApiParser racenetApiParser = new RacenetApiParser(ConfigurationManager.AppSettings["LeagueURL"]);
+                RacenetApiParser racenetApiParser = new RacenetApiParser(CloudConfigurationManager.GetSetting("LeagueURL"));
                 return racenetApiParser.GetRallyData(eventId, null);
             });
             
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse
-                    (ConfigurationManager.AppSettings["StorageConnectionString"]);
+                    (CloudConfigurationManager.GetSetting("StorageConnectionString"));
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
             CloudTable table = tableClient.GetTableReference("Rally");
             TableOperation retrieveOperation = TableOperation.Retrieve<RallyEntity>("1", eventId);
@@ -48,12 +49,11 @@ namespace DRLP.AzureTest
             {
                 RallyEntity re = new RallyEntity(eventId, "1");
                 re.Data = JsonConvert.SerializeObject(t.Result, Formatting.Indented);
-                re.Info = ConfigurationManager.AppSettings["EventInfo"];
+                re.Info = CloudConfigurationManager.GetSetting("EventInfo");
                 TableOperation insertOperation = TableOperation.Insert(re);
                 table.Execute(insertOperation);
                 Console.WriteLine("Data added in Azure !");
             }
-            Console.Read();
         }
     }
 
