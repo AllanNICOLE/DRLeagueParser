@@ -27,6 +27,7 @@ namespace DRLP.WPFUI
             InitializeComponent();
             DataContext = this;
             label_statusMessage.Content = "";
+            label_leagueTitle.Content = "";
         }
 
         // enum for the type of output to print
@@ -77,23 +78,33 @@ namespace DRLP.WPFUI
         private async void button_parseRacenetApi_Click(object sender, RoutedEventArgs e)
         {
             // check and clean inputs
-            var eventId = textBox_eventId.Text;
-            if (String.IsNullOrWhiteSpace(eventId))
+            var leagueId = textBox_leagueId.Text;
+            if (String.IsNullOrWhiteSpace(leagueId))
             {
-                label_statusMessage.Content = "No event ID";
+                label_statusMessage.Content = "No league ID";
                 label_statusMessage.Foreground = Brushes.Red;
                 return;
             }
 
-            int eventIdInt;
-            if (!Int32.TryParse(eventId, out eventIdInt))
+            int leagueIDint;
+            if (!Int32.TryParse(leagueId, out leagueIDint))
             {
-                label_statusMessage.Content = "Event ID must be an integer";
+                label_statusMessage.Content = "League ID must be an integer";
                 label_statusMessage.Foreground = Brushes.Red;
                 return;
             }
 
-            eventId = eventId.Trim();
+            
+            // Get data from league
+            var getLeagueDataTask = Task<LeagueInfo>.Factory.StartNew(() => new DiRTWebSiteParser().GetLeagueInfo(leagueIDint));
+            label_statusMessage.Content = "Fetching League data from Dirt WebSite ...";
+            label_statusMessage.Foreground = Brushes.Green;
+
+            await getLeagueDataTask;
+            if (getLeagueDataTask.Result != null)
+            {
+                label_leagueTitle.Content = $"{getLeagueDataTask.Result.LeagueTitle} - Current Event ID : {getLeagueDataTask.Result.CurrentEventId}";
+            }
 
             // clear all data
             rallyData = new Rally();
@@ -109,7 +120,7 @@ namespace DRLP.WPFUI
             });
 
             // run task to get data
-            var getDataTask = Task<Rally>.Factory.StartNew(() => racenetApiParser.GetRallyData(eventId, progress));
+            var getDataTask = Task<Rally>.Factory.StartNew(() => racenetApiParser.GetRallyData(getLeagueDataTask.Result.CurrentEventId.ToString(), progress));
 
             label_statusMessage.Content = "Fetching data from Racenet (be patient, Racenet is slow)...";
             label_statusMessage.Foreground = Brushes.Green;
