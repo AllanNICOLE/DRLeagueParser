@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DRLP.Services
+namespace DRLP.Data
 {
-    public class LeagueInfo
+    public class League
     {
         public int LeagueId { get; set; }
         public string LeagueTitle { get; set; }

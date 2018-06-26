@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using DRLP.Data;
 
 namespace DRLP.Services
 {
@@ -13,11 +14,11 @@ namespace DRLP.Services
     {
         public string LeagueURL { get; set; } = "https://www.dirtgame.com/fr/leagues/league/";
 
-        public LeagueInfo GetLeagueInfo(int leagueId)
+        public League GetLeagueInfo(int leagueId)
         {
             HtmlWeb webParser = new HtmlWeb();
             var htmlDoc = webParser.Load(LeagueURL + leagueId.ToString());
-            return new LeagueInfo
+            return new League
             {
                 LeagueId = leagueId,
                 CurrentEventId = Convert.ToInt32(htmlDoc.DocumentNode.SelectNodes("//div[@data-ng-event-id]").FirstOrDefault().Attributes["data-ng-event-id"].Value),

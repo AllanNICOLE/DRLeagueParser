@@ -96,7 +96,7 @@ namespace DRLP.WPFUI
 
             
             // Get data from league
-            var getLeagueDataTask = Task<LeagueInfo>.Factory.StartNew(() => new DiRTWebSiteParser().GetLeagueInfo(leagueIDint));
+            var getLeagueDataTask = Task<League>.Factory.StartNew(() => new DiRTWebSiteParser().GetLeagueInfo(leagueIDint));
             label_statusMessage.Content = "Fetching League data from Dirt WebSite ...";
             label_statusMessage.Foreground = Brushes.Green;
 
