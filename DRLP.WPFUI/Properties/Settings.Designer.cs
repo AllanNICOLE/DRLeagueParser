@@ -26,12 +26,12 @@ namespace DRLP.WPFUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public string CurrentEventID {
+        public string CurrentLeagueId {
             get {
-                return ((string)(this["CurrentEventID"]));
+                return ((string)(this["CurrentLeagueId"]));
             }
             set {
-                this["CurrentEventID"] = value;
+                this["CurrentLeagueId"] = value;
             }
         }
         

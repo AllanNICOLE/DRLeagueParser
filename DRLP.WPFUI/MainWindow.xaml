@@ -23,7 +23,7 @@
         <Button x:Name="button_copy" Content="Copy" HorizontalAlignment="Left" Margin="175,87,0,0" VerticalAlignment="Top" Width="60" Click="button_copy_Click"/>
         <Button x:Name="button_parseRacenetApi" Content="Load" HorizontalAlignment="Left" Margin="167,25,0,0" VerticalAlignment="Top" Width="148" Click="button_parseRacenetApi_Click"/>
 
-        <TextBox x:Name="textBox_leagueId" HorizontalAlignment="Left" Margin="87,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74" Height="20" Text="{Binding Source={x:Static properties:Settings.Default}, Path=LeagueId}"/>
+        <TextBox x:Name="textBox_leagueId" HorizontalAlignment="Left" Margin="87,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="74" Height="20" Text="{Binding Source={x:Static properties:Settings.Default}, Path=CurrentLeagueId}"/>
         <TextBlock IsHitTestVisible="False" Text="League ID : " VerticalAlignment="Top" HorizontalAlignment="Left" Margin="32,27,0,0" Height="18" Foreground="Black" FontSize="11" />
         <Label x:Name="label_leagueTitle" Content="status text" HorizontalAlignment="Left" Margin="348,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.52,-0.717"/>
     </Grid>
